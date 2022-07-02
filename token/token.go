@@ -35,6 +35,18 @@ const (
 	SKIP_LOWER     = "SLT"
 	LOADP          = "LDP"
 	SAVEP          = "STP"
+
+	HASH  = "HASH"
+	AT    = "AT"
+	MINUS = "MINUS"
+	BLING = "BLING"
+
+	// TODO: Extend this later to include the more advanced addressing modes
+
+	INTEGER   = "INT"
+	COMMA     = "COMMA"
+	SEMICOLON = "SEMICOLON"
+	COMMENT   = "COMMENT"
 )
 
 var keywords = map[string]TokenType{

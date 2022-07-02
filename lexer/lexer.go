@@ -1,6 +1,10 @@
 package lexer
 
-import "github.com/andey-robins/GoMARS/token"
+import (
+	"strings"
+
+	"github.com/andey-robins/GoMARS/token"
+)
 
 type Lexer struct {
 	input        string
@@ -10,6 +14,7 @@ type Lexer struct {
 }
 
 func New(input string) *Lexer {
+	input = removeComments(input)
 	l := &Lexer{input: input}
 	l.readChar()
 	return l
@@ -21,6 +26,18 @@ func (l *Lexer) NextToken() token.Token {
 	l.skipWhitespace()
 
 	switch l.ch {
+	case ',':
+		tok.Literal = ","
+		tok.Type = token.COMMA
+	case '#':
+		tok.Literal = "#"
+		tok.Type = token.HASH
+	case '@':
+		tok.Literal = "@"
+		tok.Type = token.AT
+	case '-':
+		tok.Literal = "-"
+		tok.Type = token.MINUS
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -28,6 +45,10 @@ func (l *Lexer) NextToken() token.Token {
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdentifier(tok.Literal)
+			return tok
+		} else if isDigit(l.ch) {
+			tok.Literal = l.readNumber()
+			tok.Type = token.INTEGER
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
@@ -89,4 +110,19 @@ func isDigit(ch byte) bool {
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
+}
+
+func removeComments(in string) string {
+	lines := strings.Split(in, "\n")
+	cleanLines := make([]string, 0)
+	for _, line := range lines {
+		idx := strings.Index(line, ";")
+		if idx < 0 {
+			cleanLines = append(cleanLines, line)
+		} else {
+			cleanLines = append(cleanLines, line[:idx])
+		}
+	}
+
+	return strings.Join(cleanLines, "\n")
 }
