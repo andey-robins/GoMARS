@@ -1,8 +1,23 @@
 # GoMARS
-A Go implementation of the MARS program for Core Wars
+A Go implementation of the MARS program for Core Wars.
+
+The project goal is to completely implement the ICWS '94 standard, though currently it will only contain the three basic addressing modes ($, #, @) and the instructions [below](#instructions)
 
 - [GoMARS](#gomars)
+  - [Usage](#usage)
+  - [Milestones](#milestones)
   - [Instructions](#instructions)
+
+## Usage
+
+This library will eventually simulate an entire game of Core Wars in Go. Invocations and directions on how to utilize the library will come after a usable initial version is reached.
+
+## Milestones
+
+- [x] Finish parser
+- [ ] Implement VM
+- [ ] Run Games
+- [ ] Standardize/Publish API
 
 ## Instructions
 
