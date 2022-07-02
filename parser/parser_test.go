@@ -80,6 +80,70 @@ func TestDwarfParsing(t *testing.T) {
 	}
 }
 
+func TestParsingAllStatements(t *testing.T) {
+	input := `
+	DAT #1, #2
+	MOV 1, 2
+	ADD 1, 2
+	SUB @1, @2
+	MUL 1, 2
+	DIV 1, 2
+	MOD 1, 2		; here are some comments
+	JMP 10
+	JMZ 10, 1
+	JMN 10, 1
+	DJN 10, 10
+	SPL 5			; i put them in here to test the parser/lexer
+	CMP #4, #5
+	SEQ #1, #2
+	SNE #1, #2
+	SLT #1, #2
+	LDP 1, @4		; they shouldn't impact the parsing at all
+	STP 1, @5
+	NOP
+	`
+
+	l := lexer.New(input)
+	p := New(l)
+
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	if program == nil {
+		t.Fatalf("ParseProgram() returned nil")
+	}
+	if len(program.Statements) != 19 {
+		t.Fatalf("program.Statements does not contain 19 statements. got%d", len(program.Statements))
+	}
+
+	tests := []string{
+		"DAT #1, #2",
+		"MOV 1, 2",
+		"ADD 1, 2",
+		"SUB @1, @2",
+		"MUL 1, 2",
+		"DIV 1, 2",
+		"MOD 1, 2",
+		"JMP 10",
+		"JMZ 10, 1",
+		"JMN 10, 1",
+		"DJN 10, 10",
+		"SPL 5",
+		"CMP #4, #5",
+		"SEQ #1, #2",
+		"SNE #1, #2",
+		"SLT #1, #2",
+		"LDP 1, @4",
+		"STP 1, @5",
+		"NOP",
+	}
+
+	for i, expectedString := range tests {
+		if expectedString != program.Statements[i].String() {
+			t.Errorf("[%v] - expectedString='%v'. got='%v'", i, expectedString, program.Statements[i].String())
+		}
+	}
+}
+
 func checkParserErrors(t *testing.T, p *Parser) {
 	errors := p.Errors()
 

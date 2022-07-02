@@ -86,7 +86,6 @@ func (djs *DecrementJumpStatement) String() string {
 type SplitStatement struct {
 	Token  token.Token
 	AField Expression
-	BField Expression
 }
 
 func (ss *SplitStatement) statementNode()       {}
@@ -95,8 +94,7 @@ func (ss *SplitStatement) String() string {
 	var out bytes.Buffer
 
 	out.WriteString(ss.TokenLiteral() + " ")
-	out.WriteString(ss.AField.String() + ", ")
-	out.WriteString(ss.BField.String())
+	out.WriteString(ss.AField.String())
 
 	return out.String()
 }

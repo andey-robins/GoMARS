@@ -96,9 +96,7 @@ func (ns *NopStatement) TokenLiteral() string { return ns.Token.Literal }
 func (ns *NopStatement) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(ns.TokenLiteral() + " ")
-	out.WriteString(ns.AField.String() + ", ")
-	out.WriteString(ns.BField.String())
+	out.WriteString(ns.TokenLiteral())
 
 	return out.String()
 }
