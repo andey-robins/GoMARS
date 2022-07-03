@@ -80,8 +80,8 @@ func NewVM(size int, prog1, prog2 string) *VirtualMachine {
 
 	return &VirtualMachine{
 		Memory:    mem,
-		APointers: NewProcessQueue(0),
-		BPointers: NewProcessQueue(size / 2),
+		APointers: NewProcessQueue(0, size),
+		BPointers: NewProcessQueue(size/2, size),
 		AProgram:  prog1,
 		BProgram:  prog2,
 		Winner:    "",
@@ -117,9 +117,9 @@ func (vm *VirtualMachine) Tick() bool {
 	}
 
 	// move the game forward 1 turn
-	vm.execute(vm.APointers.GetNextProcessPtr())
+	vm.execute(vm.APointers.GetNextProcessPtr(), vm.APointers)
 	vm.APointers.TickProcess()
-	vm.execute(vm.BPointers.GetNextProcessPtr())
+	vm.execute(vm.BPointers.GetNextProcessPtr(), vm.BPointers)
 	vm.BPointers.TickProcess()
 	vm.Turn += 1
 

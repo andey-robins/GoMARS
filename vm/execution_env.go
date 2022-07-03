@@ -1,26 +1,37 @@
 package vm
 
-func (vm *VirtualMachine) execute(idx int) {
+func (vm *VirtualMachine) execute(idx int, processQueue *ProcessQueue) {
 	currCell := vm.Memory[idx]
 	switch currCell.Operation {
 	case DAT:
-		return
+		processQueue.KillProcess()
 	case MOV:
 		sourceIdx := vm.resolveFieldToIndex(idx, currCell.AField)
 		targetIdx := vm.resolveFieldToIndex(idx, currCell.BField)
 		vm.Memory[targetIdx] = vm.Memory[sourceIdx]
 	case ADD:
-		return
+		addedVal := vm.resolveFieldToIndex(idx, currCell.AField)
+		targetIdx := vm.resolveFieldToIndex(idx, currCell.BField)
+		vm.Memory[targetIdx].BField.Value += addedVal
 	case SUB:
-		return
+		subtractedVal := vm.resolveFieldToIndex(idx, currCell.AField)
+		targetIdx := vm.resolveFieldToIndex(idx, currCell.BField)
+		vm.Memory[targetIdx].BField.Value -= subtractedVal
 	case MUL:
-		return
+		multipliedVal := vm.resolveFieldToIndex(idx, currCell.AField)
+		targetIdx := vm.resolveFieldToIndex(idx, currCell.BField)
+		vm.Memory[targetIdx].BField.Value *= multipliedVal
 	case DIV:
-		return
+		divisor := vm.resolveFieldToIndex(idx, currCell.AField)
+		targetIdx := vm.resolveFieldToIndex(idx, currCell.BField)
+		vm.Memory[targetIdx].BField.Value /= divisor
 	case MOD:
-		return
+		modVal := vm.resolveFieldToIndex(idx, currCell.AField)
+		targetIdx := vm.resolveFieldToIndex(idx, currCell.BField)
+		vm.Memory[targetIdx].BField.Value %= modVal
 	case JMP:
-		return
+		offset := vm.resolveFieldToIndex(idx, currCell.AField)
+		processQueue.Jump(offset)
 	case JMZ:
 		return
 	case JMN:
@@ -49,13 +60,13 @@ func (vm *VirtualMachine) execute(idx int) {
 func (vm *VirtualMachine) resolveFieldToIndex(idx int, field Field) int {
 	switch field.Mode {
 	case IMMEDIATE:
-		return field.Value
+		return field.Value % len(vm.Memory)
 	case DIRECT:
-		return idx + field.Value
+		return (idx + field.Value) % len(vm.Memory)
 	case INDIRECT:
-		return idx + vm.Memory[idx+field.Value].BField.Value
+		return (idx + vm.Memory[idx+field.Value].BField.Value) % len(vm.Memory)
 	default:
-		// this should never occur and also it will force a crash
+		// this should never occur and also it will force a crash if we somehow reach it
 		return -1
 	}
 }
