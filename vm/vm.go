@@ -1,6 +1,9 @@
 package vm
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+)
 
 type VirtualMachine struct {
 	Memory    []Cell
@@ -75,8 +78,20 @@ func NewVM(size int, prog1, prog2 string) *VirtualMachine {
 	}
 
 	// add user programs into memory
-	mem = programVM(mem, prog1, 0)
-	mem = programVM(mem, prog2, size/2)
+	pos1 := rand.Intn(size)
+	pos2 := rand.Intn(size)
+
+	fmt.Printf("Trying to program with idx %v and %v\n", pos1, pos2)
+
+	bytecode1, _ := compile(prog1)
+	for inRange(pos1, pos1+len(bytecode1), pos2) {
+		pos2 = rand.Intn(size)
+	}
+
+	fmt.Printf("Trying to program with idx %v and %v\n", pos1, pos2)
+
+	mem = programVM(mem, prog1, pos1)
+	mem = programVM(mem, prog2, pos2)
 
 	return &VirtualMachine{
 		Memory:    mem,
@@ -98,6 +113,10 @@ func programVM(mem []Cell, prog string, idx int) []Cell {
 		mem[idx+i] = bytecode[i]
 	}
 	return mem
+}
+
+func inRange(start, end, val int) bool {
+	return val >= start && val <= end
 }
 
 func (vm *VirtualMachine) Tick() bool {

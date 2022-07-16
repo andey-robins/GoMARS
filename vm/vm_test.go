@@ -1,6 +1,7 @@
 package vm
 
 import (
+	"math/rand"
 	"testing"
 )
 
@@ -8,27 +9,17 @@ func TestImpExecution(t *testing.T) {
 	imp := `
 	MOV 0, 1
 	`
+
+	// standardize random seed for deterministic tests
+	rand.Seed(1)
+
 	core := NewVM(16, imp, imp)
 	for i := 0; i < 7; i++ {
 		core.Tick()
 	}
 
-	impCell := Cell{
-		Operation: MOV,
-		AField: Field{
-			Mode:  DIRECT,
-			Value: 0,
-		},
-		BField: Field{
-			Mode:  DIRECT,
-			Value: 1,
-		},
-	}
-
-	for i, cell := range core.Memory {
-		if !(cell.Operation == MOV && testEqualField(impCell.AField, cell.AField) && testEqualField(impCell.BField, cell.BField)) {
-			t.Errorf("memory cell %v is wrong.", i)
-		}
+	if core.Winner != "Draw" {
+		t.Errorf("TestImpExecution failed. got=%v exp=%v", core.Winner, "APlayer")
 	}
 }
 
@@ -40,8 +31,12 @@ func TestKill(t *testing.T) {
 	DAT 0, 0
 	`
 
+	// standardize random seed for deterministic tests
+	rand.Seed(3)
+
 	core := NewVM(16, imp, suicide)
 	for core.Tick() {
+		core.Display()
 	}
 	if core.Winner != "APlayer" {
 		t.Errorf("wrong winner. got=%s, exp=%s", core.Winner, "APlayer")
@@ -52,6 +47,10 @@ func TestDraw(t *testing.T) {
 	imp := `
 	MOV 0, 1
 	`
+
+	// standardize random seed for deterministic tests
+	rand.Seed(1)
+
 	core := NewVM(8, imp, imp)
 	for core.Tick() {
 	}
@@ -72,6 +71,10 @@ func TestRealDuel(t *testing.T) {
 	imp := `
 	MOV 0, 1
 	`
+
+	// standardize random seed for deterministic tests
+	rand.Seed(1)
+
 	core := NewVM(32, dwarf, imp)
 	for core.Tick() {
 	}
