@@ -33,25 +33,55 @@ func (vm *VirtualMachine) execute(idx int, processQueue *ProcessQueue) {
 		offset := vm.resolveFieldToIndex(idx, currCell.AField)
 		processQueue.Jump(offset)
 	case JMZ:
-		return
+		value := vm.resolveFieldToIndex(idx, currCell.BField)
+		offset := vm.resolveFieldToIndex(idx, currCell.AField)
+		if value == 0 {
+			processQueue.Jump(offset)
+		}
 	case JMN:
-		return
+		value := vm.resolveFieldToIndex(idx, currCell.BField)
+		offset := vm.resolveFieldToIndex(idx, currCell.AField)
+		if value != 0 {
+			processQueue.Jump(offset)
+		}
 	case DJN:
-		return
+		value := vm.resolveFieldToIndex(idx, currCell.BField) - 1
+		vm.Memory[idx].AField.Value -= 1 // decrement the value actually in the cell
+		offset := vm.resolveFieldToIndex(idx, currCell.AField)
+		if value != 0 {
+			processQueue.Jump(offset)
+		}
 	case SPL:
-		return
-	case CMP:
-		return
-	case SEQ:
-		return
+		targetIdx := vm.resolveFieldToIndex(idx, currCell.AField)
+		processQueue.SplitProcessTo(targetIdx)
+	case CMP: // equivalent to SEQ
+		idxOne := vm.resolveFieldToIndex(idx, currCell.AField)
+		idxTwo := vm.resolveFieldToIndex(idx, currCell.BField)
+		if vm.Memory[idxOne].Operation == vm.Memory[idxTwo].Operation {
+			processQueue.TickProcess()
+		}
+	case SEQ: // equivalent to CMP
+		idxOne := vm.resolveFieldToIndex(idx, currCell.AField)
+		idxTwo := vm.resolveFieldToIndex(idx, currCell.BField)
+		if vm.Memory[idxOne].Operation == vm.Memory[idxTwo].Operation {
+			processQueue.TickProcess()
+		}
 	case SNE:
-		return
+		idxOne := vm.resolveFieldToIndex(idx, currCell.AField)
+		idxTwo := vm.resolveFieldToIndex(idx, currCell.BField)
+		if vm.Memory[idxOne].Operation != vm.Memory[idxTwo].Operation {
+			processQueue.TickProcess()
+		}
 	case SLT:
-		return
+		idxOne := vm.resolveFieldToIndex(idx, currCell.AField)
+		idxTwo := vm.resolveFieldToIndex(idx, currCell.BField)
+		if vm.Memory[idxOne].Operation <= vm.Memory[idxTwo].Operation {
+			processQueue.TickProcess()
+		}
 	case LDP:
-		return
+		processQueue.KillProcess()
 	case STP:
-		return
+		processQueue.KillProcess()
 	case NOP:
 		return
 	}
