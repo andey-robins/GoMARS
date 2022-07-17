@@ -78,17 +78,15 @@ func NewVM(size int, prog1, prog2 string) *VirtualMachine {
 	}
 
 	// add user programs into memory
-	pos1 := rand.Intn(size)
-	pos2 := rand.Intn(size)
-
-	fmt.Printf("Trying to program with idx %v and %v\n", pos1, pos2)
-
 	bytecode1, _ := compile(prog1)
+	bytecode2, _ := compile(prog2)
+
+	pos1 := rand.Intn(size - len(bytecode1))
+	pos2 := rand.Intn(size - len(bytecode2))
+
 	for inRange(pos1, pos1+len(bytecode1), pos2) {
 		pos2 = rand.Intn(size)
 	}
-
-	fmt.Printf("Trying to program with idx %v and %v\n", pos1, pos2)
 
 	mem = programVM(mem, prog1, pos1)
 	mem = programVM(mem, prog2, pos2)
