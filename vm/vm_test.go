@@ -32,11 +32,10 @@ func TestKill(t *testing.T) {
 	`
 
 	// standardize random seed for deterministic tests
-	rand.Seed(3)
-
+	rand.Seed(9)
 	core := NewVM(16, imp, suicide)
 	for core.Tick() {
-		core.Display()
+		// core.Display()
 	}
 	if core.Winner != "APlayer" {
 		t.Errorf("wrong winner. got=%s, exp=%s", core.Winner, "APlayer")
@@ -73,8 +72,7 @@ func TestRealDuel(t *testing.T) {
 	`
 
 	// standardize random seed for deterministic tests
-	rand.Seed(1)
-
+	rand.Seed(3)
 	core := NewVM(32, dwarf, imp)
 	for core.Tick() {
 	}

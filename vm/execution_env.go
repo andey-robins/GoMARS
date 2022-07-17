@@ -24,7 +24,9 @@ func (vm *VirtualMachine) execute(idx int, processQueue *ProcessQueue) {
 	case DIV:
 		divisor := vm.resolveFieldToIndex(idx, currCell.AField)
 		targetIdx := vm.resolveFieldToIndex(idx, currCell.BField)
-		vm.Memory[targetIdx].BField.Value /= divisor
+		if divisor != 0 {
+			vm.Memory[targetIdx].BField.Value /= divisor
+		}
 	case MOD:
 		modVal := vm.resolveFieldToIndex(idx, currCell.AField)
 		targetIdx := vm.resolveFieldToIndex(idx, currCell.BField)

@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/andey-robins/GoMARS/ast"
 	"github.com/andey-robins/GoMARS/token"
 )
@@ -53,7 +51,6 @@ func (p *Parser) parseStatement() ast.Statement {
 }
 
 func (p *Parser) parseDataStatement() ast.Statement {
-	fmt.Println("Parsing data statement")
 	stmt := &ast.DataStatement{Token: p.curToken}
 	p.nextToken()
 	stmt.AField = p.parseExpression()
